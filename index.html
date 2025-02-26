@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Idea Generator</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ffeb3b, #4caf50, #03a9f4);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Navigation Bar */
+    nav {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    nav .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      padding-left: 25px;
+    }
+
+    nav .logo img {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    nav .title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      padding-right: 45%;
+    }
+
+    /* Container */
+    .container {
+      width: 90%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    /* Input and Buttons */
+    input[type="text"] {
+      width: calc(100% - 22px);
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #218838;
+    }
+
+    button.reset {
+      background-color: #dc3545;
+    }
+
+    button.reset:hover {
+      background-color: #c82333;
+    }
+
+    button.regenerate {
+      background-color: #ffc107;
+      color: #000;
+    }
+
+    button.regenerate:hover {
+      background-color: #e0a800;
+    }
+
+    /* Idea List */
+    .idea-list {
+      width: 100%;
+      margin-top: 20px;
+      display: none; /* Hidden by default */
+    }
+
+    .idea-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 16px;
+    }
+
+    .idea-item:last-child {
+      border-bottom: none;
+    }
+
+    .idea-item input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .viral-percentage {
+      color: #888;
+      font-size: 14px;
+    }
+
+    /* Subscription Section */
+    .subscription {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .subscription button {
+      background-color: #ff0000;
+      color: white;
+    }
+
+    .subscription button:hover {
+      background-color: #cc0000;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      nav .logo {
+        font-size: 20px;
+      }
+
+      nav .title {
+        font-size: 18px;
+      }
+
+      .container {
+        width: 95%;
+        padding: 15px;
+      }
+
+      input[type="text"] {
+        font-size: 14px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+
+      .idea-item {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav .logo {
+        font-size: 18px;
+      }
+
+      nav .title {
+        font-size: 16px;
+      }
+
+      .buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="logo" onclick="uploadLogo()">
+      <img src="https://via.placeholder.com/40" alt="Logo" id="logoImage">
+    </div>
+    <div class="title">Content Ideas</div>
+    
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+    <h1>Content Idea Generator</h1>
+    <div class="subscription">
+      <p>Subscribe to my YouTube channel to unlock all features!</p>
+      <button onclick="checkSubscription()">Subscribe</button>
+      <button onclick="verifySubscription()">I Subscribed</button>
+    </div>
+    <input type="text" id="nicheInput" placeholder="Enter your niche (e.g., fitness, travel, tech)" disabled>
+    <div class="buttons">
+      <button onclick="generateIdeas()" id="generateButton" disabled>Generate Ideas</button>
+      <button class="regenerate" onclick="regenerateIdeas()" id="regenerateButton" disabled>Regenerate</button>
+      <button class="reset" onclick="resetIdeas()" id="resetButton" disabled>Reset</button>
+      <button onclick="copySelectedIdeas()" id="copyButton" disabled>Copy Selected Ideas</button>
+    </div>
+    <div class="idea-list" id="ideaList"></div>
+  </div>
+
+  <script>
+    const ideaTemplates = [
+      "Top 10 {niche} trends in 2023",
+      "How to get started with {niche} for beginners",
+      "The ultimate guide to {niche}",
+      "5 common mistakes to avoid in {niche}",
+      "Best tools and resources for {niche}",
+      "How to master {niche} in 30 days",
+      "The future of {niche}: What to expect",
+      "10 inspiring {niche} success stories",
+      "How to monetize your {niche} skills",
+      "The science behind {niche}",
+      "5 creative ways to use {niche} in daily life",
+      "How to stay motivated in {niche}",
+      "The best books to learn {niche}",
+      "How to build a community around {niche}",
+      "The pros and cons of {niche}",
+      "How to turn your {niche} hobby into a career",
+      "The history of {niche} and its evolution",
+      "10 must-follow {niche} influencers",
+      "How to create a {niche} portfolio",
+      "The best online courses for {niche}",
+      "How to solve common problems in {niche}",
+      "The psychology of {niche}",
+      "How to network in the {niche} industry",
+      "The best apps for {niche} enthusiasts",
+      "How to balance {niche} with other priorities",
+      "The impact of {niche} on society",
+      "How to innovate in {niche}",
+      "The best podcasts about {niche}",
+      "How to create a {niche} business plan",
+      "The role of technology in {niche}",
+      "How to teach {niche} to others",
+      "The best YouTube channels for {niche}",
+      "How to measure success in {niche}",
+      "The best {niche} events and conferences",
+      "How to write a {niche} blog",
+      "The best social media strategies for {niche}",
+      "How to collaborate with others in {niche}",
+      "The best {niche} software and tools",
+      "How to overcome challenges in {niche}",
+      "The best {niche} communities to join",
+      "How to create a {niche} product",
+      "The best {niche} case studies",
+      "How to stay updated in {niche}",
+      "The best {niche} hacks and shortcuts",
+      "How to create a {niche} brand",
+      "The best {niche} experiments to try",
+      "How to write a {niche} book",
+      "The best {niche} challenges to take",
+      "How to create a {niche} course",
+      "The best {niche} quotes to inspire you"
+    ];
+
+    let currentIdeas = [];
+    let isSubscribed = false;
+
+    // Logo Upload Functionality
+    function uploadLogo() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            document.getElementById('logoImage').src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    }
+
+    // Subscription Check (Placeholder)
+    function checkSubscription() {
+      alert('Please subscribe to my YouTube channel to unlock all features!');
+      window.open('https://www.youtube.com/channel/UCf5V8SBxk_Y-rFB_ynA6ygA', '_blank'); // Replace with your YouTube channel link
+    }
+
+    // Verify Subscription (Placeholder)
+    function verifySubscription() {
+      const isSubscriber = confirm('Are you really subscribed to my YouTube channel?');
+      if (isSubscriber) {
+        isSubscribed = true;
+        unlockFeatures();
+      } else {
+        alert('Please subscribe to unlock all features.');
+      }
+    }
+
+    // Unlock Features
+    function unlockFeatures() {
+      document.getElementById('nicheInput').disabled = false;
+      document.getElementById('generateButton').disabled = false;
+      document.querySelector('.idea-list').style.display = 'block';
+      document.getElementById('regenerateButton').disabled = false;
+      document.getElementById('resetButton').disabled = false;
+      document.getElementById('copyButton').disabled = false;
+    }
+
+    // Generate Ideas
+    function generateIdeas() {
+      const niche = document.getElementById('nicheInput').value.trim();
+      if (!niche) {
+        alert('Please enter a niche!');
+        return;
+      }
+
+      currentIdeas = [];
+      const numberOfIdeas = isSubscribed ? 50 : 5; // Show 50 ideas if subscribed, else 5
+      for (let i = 0; i < numberOfIdeas; i++) {
+        const randomTemplate = ideaTemplates[Math.floor(Math.random() * ideaTemplates.length)];
+        const idea = randomTemplate.replace(/{niche}/g, niche);
+        const viralPercentage = Math.floor(Math.random() * 100) + 1;
+        currentIdeas.push({ idea, viralPercentage });
+      }
+
+      displayIdeas(currentIdeas);
+    }
+
+    // Regenerate Ideas
+    function regenerateIdeas() {
+      if (currentIdeas.length === 0) {
+        alert('Please generate ideas first!');
+        return;
+      }
+
+      const niche = document.getElementById('nicheInput').value.trim();
+      const regeneratedIdeas = currentIdeas.map(() => {
+        const randomTemplate = ideaTemplates[Math.floor(Math.random() * ideaTemplates.length)];
+        const idea = randomTemplate.replace(/{niche}/g, niche);
+        const viralPercentage = Math.floor(Math.random() * 100) + 1;
+        return { idea, viralPercentage };
+      });
+
+      displayIdeas(regeneratedIdeas);
+    }
+
+    // Display Ideas
+    function displayIdeas(ideas) {
+      const ideaList = document.getElementById('ideaList');
+      ideaList.innerHTML = '';
+
+      ideas.forEach((item, index) => {
+        const ideaItem = document.createElement('div');
+        ideaItem.className = 'idea-item';
+        ideaItem.innerHTML = `
+          <input type="checkbox" id="idea${index}" class="idea-checkbox">
+          <label for="idea${index}">${index + 1}. ${item.idea}</label>
+          <span class="viral-percentage">${item.viralPercentage}% viral</span>
+        `;
+        ideaList.appendChild(ideaItem);
+      });
+    }
+
+    // Copy Selected Ideas
+    function copySelectedIdeas() {
+      const selectedIdeas = [];
+      document.querySelectorAll('.idea-checkbox:checked').forEach((checkbox) => {
+        const ideaText = checkbox.nextElementSibling.textContent;
+        selectedIdeas.push(ideaText);
+      });
+
+      if (selectedIdeas.length === 0) {
+        alert('Please select at least one idea to copy!');
+        return;
+      }
+
+      const ideasText = selectedIdeas.join('\n');
+      navigator.clipboard.writeText(ideasText)
+        .then(() => alert('Selected ideas copied to clipboard!'))
+        .catch(() => alert('Failed to copy ideas.'));
+    }
+
+    // Reset Ideas
+    function resetIdeas() {
+      document.getElementById('nicheInput').value = '';
+      document.getElementById('ideaList').innerHTML = '';
+      currentIdeas = [];
+    }
+  </script>
+</body>
+</html>
